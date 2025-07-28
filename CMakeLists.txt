@@ -24,7 +24,7 @@ add_executable(Game
     main.cpp 
     src/main_menu.cpp
  "include/constants.h" "src/button.cpp")
-
+ 
  # Copy assets to build directory
  file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/bin)
 

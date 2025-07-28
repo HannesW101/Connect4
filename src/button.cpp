@@ -66,5 +66,25 @@ namespace Connect4 {
 				window.setMouseCursor(sf::Cursor(sf::Cursor::Type::Arrow));
 			}
 		}
+
+		void Button::set_on_click(std::function<void()> func) {
+			this->m_on_click = std::move(func);
+		}
+
+		void Button::on_click(const sf::Event& event) {
+			// Get pointer to mouse button pressed event.
+			if (auto mb{ event.getIf<sf::Event::MouseButtonPressed>() }) {
+				// Only handle left clicks.
+				if (mb->button == sf::Mouse::Button::Left) {
+					// Get position of mouse
+					sf::Vector2f mouse_pos(static_cast<float>(mb->position.x), static_cast<float>(mb->position.y));
+					// Check if mouse is in bounds of the button and that m_on_click exists.
+					if (this->contains(mouse_pos) && this->m_on_click) {
+						// Finally call the on click method.
+						this->m_on_click();
+					}
+				}
+			}
+		}
 	}
 }

@@ -11,6 +11,10 @@ int main()
 
     while (main_menu.isOpen())
     {
+        while (auto event{ main_menu.pollEvent() }) {
+            main_menu.receive_event(*event);
+        }
+
         main_menu.draw_all();
     }
 }

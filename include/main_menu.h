@@ -49,6 +49,9 @@ namespace Connect4 {
 
 			// Draw the assets onto the current window.
 			void draw_all();
+
+			// Receive events happening on the main menu.
+			void receive_event(sf::Event& event);
 		};
 	}
 }

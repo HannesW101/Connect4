@@ -79,6 +79,11 @@ namespace Connect4 {
 					// Set the position of the button using chosen x and y values ( use the windows as anchors so its dynamically sized ).
 					// Dont worry the function takes into account the scaling and calculates using that ( thats why you need to pass the texture ).
 					this->m_button_ptrs[CustomButton::play_exit]->set_pos(this->m_normal_textures_arr[CustomButton::play_exit], { getSize().x - 180.00f, 100.00f });
+
+					// Set the on click event for the button.
+					this->m_button_ptrs[CustomButton::play_exit]->set_on_click([this]() {
+						this->close();
+					});
 					break;
 				default:
 					// Resize the button with the chosen scale.
@@ -108,6 +113,13 @@ namespace Connect4 {
 
 			// Finally display all thats was been rendered.
 			this->display();
+		}
+
+		void MainMenu::receive_event(sf::Event& event) {
+			// Pass th event to every button to check if one of them is clicked.
+			for (std::size_t i{ 0u }; i < this->m_button_ptrs.size(); ++i) {
+				this->m_button_ptrs[i]->on_click(event);
+			}
 		}
 	}
 }

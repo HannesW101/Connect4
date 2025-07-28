@@ -5,6 +5,7 @@
 // STL.
 #include <iostream>
 #include <Windows.h>
+#include <functional>
 
 namespace Connect4 {
 	namespace GUI {
@@ -18,6 +19,10 @@ namespace Connect4 {
 
 			// Bool to hold if the user is hovering or not.
 			bool m_is_hovering;
+			
+			// Holds the function for the on click event.
+			// Will get this function from a public method parameter.
+			std::function<void()> m_on_click;
 		public:
 			// Constructor takes in a texture and position for the button.
 			Button(const sf::Texture& texture);
@@ -41,6 +46,12 @@ namespace Connect4 {
 			// Updates the buttons texture based on the mouse position ( is the user hovering over the button? ).
 			// Needs the window to update the cursor for that window.
 			void update(sf::RenderWindow& window, sf::Texture& hover_texture, sf::Texture& normal_texture, sf::Vector2f mouse_position);
+
+			// Pass the function to set the on click event.
+			void set_on_click(std::function<void()> func);
+
+			// Call the m_on_click function when a user left clicks the button.
+			void on_click(const sf::Event& event);
 		};
 	}
 }
