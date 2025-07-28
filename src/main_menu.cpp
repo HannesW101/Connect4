@@ -31,23 +31,33 @@ namespace Connect4 {
 
 		void MainMenu::draw_main_menu() {
 			// Draw buttons
-			for (std::size_t i = 0; i < m_button_ptrs.size(); ++i) {
-				if (m_button_ptrs[i]) {
-					m_button_ptrs[i]->draw(*this);
-					m_button_ptrs[i]->update(*this, m_hover_textures_arr[i], m_normal_textures_arr[i],
-						mapPixelToCoords(sf::Mouse::getPosition(*this)));
-				}
-			}
+			this->m_button_ptrs[CustomButton::play_exit]->draw(*this);
+			this->m_button_ptrs[CustomButton::play_exit]->update(*this,
+				m_hover_textures_arr[CustomButton::play_exit], 
+				m_normal_textures_arr[CustomButton::play_exit], 
+				mapPixelToCoords(sf::Mouse::getPosition(*this)));
 
-			// Draw logo (cache this texture to avoid reloading every frame!)
+			this->m_button_ptrs[CustomButton::play_offline]->draw(*this);
+			this->m_button_ptrs[CustomButton::play_offline]->update(*this,
+				m_hover_textures_arr[CustomButton::play_offline],
+				m_normal_textures_arr[CustomButton::play_offline],
+				mapPixelToCoords(sf::Mouse::getPosition(*this)));
+
+			this->m_button_ptrs[CustomButton::play_online]->draw(*this);
+			this->m_button_ptrs[CustomButton::play_online]->update(*this,
+				m_hover_textures_arr[CustomButton::play_online],
+				m_normal_textures_arr[CustomButton::play_online],
+				mapPixelToCoords(sf::Mouse::getPosition(*this)));
+
+			// Draw logo.
 			static sf::Texture logo_texture;
-			static bool loaded = false;
-			if (!loaded) {
+			static bool logo_loaded{ false };
+			if (!logo_loaded) {
 				logo_texture.setSmooth(true);
 				if (!logo_texture.loadFromFile("assets/pics/logo.png")) {
 					std::cerr << "Failed to load logo image!\n";
 				}
-				loaded = true;
+				logo_loaded = true;
 			}
 
 			Connect4::GUI::Button logo(logo_texture);
@@ -57,7 +67,26 @@ namespace Connect4 {
 		}
 
 		void MainMenu::draw_offline_menu() {
+			// Draw background block.
+			sf::RectangleShape button_block;
+			button_block.setSize({ getSize().x * 50.00f / 100.00f, getSize().y * 50.00f / 100.00f });
+			button_block.setFillColor(sf::Color(Color::LightPurple));
+			button_block.setPosition({ getSize().x / 2.0f - (getSize().x * 50.00f / 100.00f) / 2.00f, getSize().y / 2.0f - (getSize().y * 50.00f / 100.00f) / 2.00f});
+			this->draw(button_block);
 
+			// Draw exit button.
+			this->m_button_ptrs[GUI::CustomButton::play_exit]->draw(*this);
+			this->m_button_ptrs[GUI::CustomButton::play_exit]->update(*this,
+				m_hover_textures_arr[GUI::CustomButton::play_exit], 
+				m_normal_textures_arr[GUI::CustomButton::play_exit], 
+				mapPixelToCoords(sf::Mouse::getPosition(*this)));
+
+			// Draw back to main menu button.
+			this->m_button_ptrs[GUI::CustomButton::back_to_main_menu]->draw(*this);
+			this->m_button_ptrs[GUI::CustomButton::back_to_main_menu]->update(*this,
+				m_hover_textures_arr[GUI::CustomButton::back_to_main_menu],
+				m_normal_textures_arr[GUI::CustomButton::back_to_main_menu],
+				mapPixelToCoords(sf::Mouse::getPosition(*this)));
 		}
 
 		/*
@@ -66,7 +95,6 @@ namespace Connect4 {
 		=================
 		*/
 
-		// Get the 1 instance of the main menu class.
 		MainMenu& MainMenu::get_instance() {
 			static MainMenu instance;
 			return instance;
@@ -92,6 +120,12 @@ namespace Connect4 {
 			if (!this->m_hover_textures_arr[CustomButton::play_exit].loadFromFile("assets/pics/button_exit_hover.png")) {
 				std::cerr << "Failed to load button image!\n";
 			}
+			if (!this->m_normal_textures_arr[CustomButton::back_to_main_menu].loadFromFile("assets/pics/button_main_menu_normal.png")) {
+				std::cerr << "Failed to load button image!\n";
+			}
+			if (!this->m_hover_textures_arr[CustomButton::back_to_main_menu].loadFromFile("assets/pics/button_main_menu_hover.png")) {
+				std::cerr << "Failed to load button image!\n";
+			}
 
 			for (std::size_t i{ 0u }; i < this->m_button_ptrs.size(); ++i) {
 				// Set anisotropic filtering.
@@ -99,7 +133,7 @@ namespace Connect4 {
 				this->m_hover_textures_arr[i].setSmooth(true);
 
 				// Create button using the normal texture.
-				this->m_button_ptrs[i] = std::make_unique<Connect4::GUI::Button>(this->m_normal_textures_arr[i]); // Point to the new button
+				this->m_button_ptrs[i] = std::make_unique<Connect4::GUI::Button>(this->m_normal_textures_arr[i]); // Point to the new button.
 
 				// Switch to resize and position the different buttons.
 				switch (i)
@@ -130,6 +164,19 @@ namespace Connect4 {
 						this->m_current_screen = Screens::offline_menu;
 					});
 					break;
+				case CustomButton::back_to_main_menu:
+					// Resize the button with the chosen scale.
+					this->m_button_ptrs[i]->resize(*this, this->m_normal_textures_arr[i], Connect4::Button::MainMenu::SMALL_SCALE); // Resize to % of window size.
+
+					// Set the position of the button using chosen x and y values ( use the windows as anchors so its dynamically sized ).
+					// Dont worry the function takes into account the scaling and calculates using that ( thats why you need to pass the texture ).
+					this->m_button_ptrs[CustomButton::back_to_main_menu]->set_pos(this->m_normal_textures_arr[CustomButton::back_to_main_menu], { 180.00f, 100.00f });
+
+					// Set the on click event for the button.
+					this->m_button_ptrs[CustomButton::back_to_main_menu]->set_on_click([this]() {
+						this->m_current_screen = Screens::main_menu;
+					});
+					break;
 				default:
 					// Resize the button with the chosen scale.
 					this->m_button_ptrs[i]->resize(*this, this->m_normal_textures_arr[i], Connect4::Button::MainMenu::NORMAL_SCALE); // Resize to % of window size.
@@ -154,6 +201,8 @@ namespace Connect4 {
 				this->draw_main_menu();
 				break;
 			default:
+			case (Screens::offline_menu):
+				this->draw_offline_menu();
 				break;
 			}
 			
@@ -164,7 +213,7 @@ namespace Connect4 {
 		void MainMenu::receive_event(sf::Event& event) {
 			// Pass th event to every button to check if one of them is clicked.
 			for (std::size_t i{ 0u }; i < this->m_button_ptrs.size(); ++i) {
-				this->m_button_ptrs[i]->on_click(event);
+				this->m_button_ptrs[i]->on_click(event, *this);
 			}
 		}
 	}

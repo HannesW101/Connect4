@@ -7,7 +7,7 @@
 namespace Connect4 {
 	namespace Color {
 		inline constexpr sf::Color DarkPurple{ 85u, 88u, 121u };          // #555879
-		inline constexpr sf::Color LightPurple{ 152u, 161u, 188u };       // #98A1BC
+		inline constexpr sf::Color LightPurple{ 152u, 161u, 188u };       // #98A1BC       This one is for shadow: #62709B
 		inline constexpr sf::Color LightPurpleHover{ 236u, 239u, 246u };  // #ECEFF6
 		inline constexpr sf::Color DarkCream{ 222u, 221u, 196u };         // #DEDDC4
 		inline constexpr sf::Color LightCream{ 244u, 235u, 211u };        // #F4EBD3

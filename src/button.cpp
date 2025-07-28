@@ -71,7 +71,7 @@ namespace Connect4 {
 			this->m_on_click = std::move(func);
 		}
 
-		void Button::on_click(const sf::Event& event) {
+		void Button::on_click(const sf::Event& event, sf::RenderWindow& window) {
 			// Get pointer to mouse button pressed event.
 			if (auto mb{ event.getIf<sf::Event::MouseButtonPressed>() }) {
 				// Only handle left clicks.
@@ -82,6 +82,8 @@ namespace Connect4 {
 					if (this->contains(mouse_pos) && this->m_on_click) {
 						// Finally call the on click method.
 						this->m_on_click();
+						// Set the cursor back to the arrow.
+						window.setMouseCursor(sf::Cursor(sf::Cursor::Type::Arrow));
 					}
 				}
 			}

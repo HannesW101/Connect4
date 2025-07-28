@@ -14,7 +14,8 @@ namespace Connect4 {
 		enum CustomButton {
 			play_offline,
 			play_online,
-			play_exit
+			play_exit,
+			back_to_main_menu
 		};
 
 		// Different screen throughout the application.
@@ -29,9 +30,9 @@ namespace Connect4 {
 		private:
 			// Arrays to hold textures and pointers to buttons.
 			// The magic number is the total number of buttons on the main menu.
-			std::array<sf::Texture, 3> m_normal_textures_arr;
-			std::array<sf::Texture, 3> m_hover_textures_arr;
-			std::array<std::unique_ptr<Connect4::GUI::Button>, 3> m_button_ptrs;
+			std::array<sf::Texture, 4> m_normal_textures_arr;
+			std::array<sf::Texture, 4> m_hover_textures_arr;
+			std::array<std::unique_ptr<Connect4::GUI::Button>, 4> m_button_ptrs;
 
 			// Holds the current screen the application is on.
 			Screens m_current_screen;

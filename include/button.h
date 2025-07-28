@@ -51,7 +51,7 @@ namespace Connect4 {
 			void set_on_click(std::function<void()> func);
 
 			// Call the m_on_click function when a user left clicks the button.
-			void on_click(const sf::Event& event);
+			void on_click(const sf::Event& event, sf::RenderWindow& window);
 		};
 	}
 }
