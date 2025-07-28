@@ -19,13 +19,45 @@ namespace Connect4 {
 				sf::Style::None, // Window style.
 				sf::State::Fullscreen, // State of the window.
 				sf::ContextSettings{ 0u, 0u, 8u }  // depth, stencil, antialiasing.
-			)
+			),
+			m_current_screen(Connect4::GUI::Screens::main_menu)
 		{
 
 			// Set fps to refresh rate of monitor.
 			this->setVerticalSyncEnabled(true);
 
 			this->load_resources();
+		}
+
+		void MainMenu::draw_main_menu() {
+			// Draw buttons
+			for (std::size_t i = 0; i < m_button_ptrs.size(); ++i) {
+				if (m_button_ptrs[i]) {
+					m_button_ptrs[i]->draw(*this);
+					m_button_ptrs[i]->update(*this, m_hover_textures_arr[i], m_normal_textures_arr[i],
+						mapPixelToCoords(sf::Mouse::getPosition(*this)));
+				}
+			}
+
+			// Draw logo (cache this texture to avoid reloading every frame!)
+			static sf::Texture logo_texture;
+			static bool loaded = false;
+			if (!loaded) {
+				logo_texture.setSmooth(true);
+				if (!logo_texture.loadFromFile("assets/pics/logo.png")) {
+					std::cerr << "Failed to load logo image!\n";
+				}
+				loaded = true;
+			}
+
+			Connect4::GUI::Button logo(logo_texture);
+			logo.resize(*this, logo_texture, Connect4::Button::MainMenu::LOGO_SCALE);
+			logo.set_pos(logo_texture, { getSize().x / 2.0f, getSize().y / 2.0f + 10.0f - 500.0f });
+			logo.draw(*this);
+		}
+
+		void MainMenu::draw_offline_menu() {
+
 		}
 
 		/*
@@ -85,13 +117,26 @@ namespace Connect4 {
 						this->close();
 					});
 					break;
+				case CustomButton::play_offline:
+					// Resize the button with the chosen scale.
+					this->m_button_ptrs[i]->resize(*this, this->m_normal_textures_arr[i], Connect4::Button::MainMenu::NORMAL_SCALE); // Resize to % of window size.
+
+					// Set the position of the button using chosen x and y values ( use the windows as anchors so its dynamically sized ).
+					// Dont worry the function takes into account the scaling and calculates using that ( thats why you need to pass the texture ).
+					this->m_button_ptrs[i]->set_pos(this->m_normal_textures_arr[i], { getSize().x / 2.0f, getSize().y / 2.0f + 50.0f + (static_cast<float>(i) * 400.0f) });
+
+					// Set the on click event for the button.
+					this->m_button_ptrs[CustomButton::play_offline]->set_on_click([this]() {
+						this->m_current_screen = Screens::offline_menu;
+					});
+					break;
 				default:
 					// Resize the button with the chosen scale.
 					this->m_button_ptrs[i]->resize(*this, this->m_normal_textures_arr[i], Connect4::Button::MainMenu::NORMAL_SCALE); // Resize to % of window size.
 
 					// Set the position of the button using chosen x and y values ( use the windows as anchors so its dynamically sized ).
 					// Dont worry the function takes into account the scaling and calculates using that ( thats why you need to pass the texture ).
-					this->m_button_ptrs[i]->set_pos(this->m_normal_textures_arr[i], { getSize().x / 2.0f, getSize().y / 2.0f + 10.0f + (static_cast<float>(i) * 200.0f) });
+					this->m_button_ptrs[i]->set_pos(this->m_normal_textures_arr[i], { getSize().x / 2.0f, getSize().y / 2.0f + 50.0f + (static_cast<float>(i) * 400.0f) });
 					break;
 				}
 			}
@@ -99,18 +144,19 @@ namespace Connect4 {
 
 		void MainMenu::draw_all() {
 			// First clear the screen with the background color.
-			this->clear(Connect4::Color::DarkPurple); 
+			this->clear(Color::DarkPurple); 
 
-			// Assets are added here.
+			// Assets are added here depending on which screen we are on.
 			// First check that they exist to avoid drawing when the pointers are null.
-
-			for (std::size_t i{ 0u }; i < this->m_button_ptrs.size(); ++i) {
-				if (this->m_button_ptrs[i]) {
-					this->m_button_ptrs[i]->draw(*this);
-					this->m_button_ptrs[i]->update(*this, this->m_hover_textures_arr[i], this->m_normal_textures_arr[i], mapPixelToCoords(sf::Mouse::getPosition(*this)));
-				}
+			switch (this->m_current_screen)
+			{
+			case (Screens::main_menu):
+				this->draw_main_menu();
+				break;
+			default:
+				break;
 			}
-
+			
 			// Finally display all thats was been rendered.
 			this->display();
 		}

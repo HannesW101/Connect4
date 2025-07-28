@@ -15,6 +15,7 @@ namespace Connect4 {
 
 	namespace Button {
 			namespace MainMenu {
+				inline constexpr float LOGO_SCALE{ 0.2f }; // 20% of window size
 				inline constexpr float NORMAL_SCALE{ 0.1f }; // 10% of window size
 				inline constexpr float SMALL_SCALE{ 0.05f }; // 5% of window size
 			}
